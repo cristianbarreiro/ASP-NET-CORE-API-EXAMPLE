@@ -18,9 +18,17 @@ dotnet restore
 dotnet run --project src/TaskFlow.API
 ```
 
-La API usa SQLite para que puedas comenzar sin instalar PostgreSQL. La base se crea automáticamente al iniciar.
+La aplicación se ejecutará en:
+- HTTP: `http://localhost:5080`
+- HTTPS: `https://localhost:7080`
 
-Consulta la documentación OpenAPI desde la aplicación en desarrollo.
+La API usa SQLite para comenzar sin dependencias externas (`taskflow.db` se crea automáticamente al iniciar).
+
+### Documentación y pruebas interactivas
+
+En entorno de desarrollo puedes explorar y probar los endpoints interactivamente con **Scalar UI**:
+- **Interfaz Interactiva (Scalar):** [http://localhost:5080/](http://localhost:5080/) (redirige a `/scalar/v1`)
+- **Especificación OpenAPI (JSON):** [http://localhost:5080/openapi/v1.json](http://localhost:5080/openapi/v1.json)
 
 ## Primeros endpoints
 
@@ -45,14 +53,14 @@ Ejemplo de `POST /api/tasks`:
 ## Estructura
 
 ```text
+TaskFlow.sln                Solución vinculando todos los proyectos
 src/
-  TaskFlow.API/             HTTP, controllers, configuración
+  TaskFlow.API/             HTTP, controllers, OpenAPI / Scalar UI y configuración
   TaskFlow.Application/     DTOs, contratos y casos de uso
   TaskFlow.Domain/          Entidades y reglas del dominio
-  TaskFlow.Infrastructure/  EF Core y persistencia
+  TaskFlow.Infrastructure/  EF Core y persistencia SQLite
 tests/
-  TaskFlow.UnitTests/
-  TaskFlow.IntegrationTests/
+  TaskFlow.UnitTests/       Pruebas unitarias con xUnit
 docs/                       Guías y ejercicios por fase
 ```
 
@@ -76,13 +84,21 @@ Cada guía de `docs/` contiene objetivos, explicación, práctica y criterios de
 ## Comandos útiles
 
 ```bash
+# Compilar toda la solución
 dotnet build
+
+# Ejecutar pruebas unitarias
 dotnet test
+
+# Iniciar la API en desarrollo
+dotnet run --project src/TaskFlow.API
+
+# Migraciones EF Core
 dotnet ef migrations add InitialCreate --project src/TaskFlow.Infrastructure --startup-project src/TaskFlow.API
 dotnet ef database update --project src/TaskFlow.Infrastructure --startup-project src/TaskFlow.API
 ```
 
-Si no tienes EF CLI: `dotnet tool install --global dotnet-ef`.
+> **Nota:** Si no tienes instalada la herramienta CLI de EF Core: `dotnet tool install --global dotnet-ef`.
 
 ## Convenciones
 
@@ -95,4 +111,11 @@ Si no tienes EF CLI: `dotnet tool install --global dotnet-ef`.
 
 ## Estado inicial
 
-El starter incluye CRUD de tareas, EF Core con SQLite, DTOs, validación por Data Annotations, inyección de dependencias y una prueba unitaria básica. Las siguientes fases están documentadas como ejercicios para implementar.
+El proyecto incluye:
+- Solución [TaskFlow.sln](TaskFlow.sln) configurada y enlazada.
+- CRUD de tareas (`/api/tasks`).
+- EF Core con SQLite y auto-creación de esquema.
+- DTOs y validación por Data Annotations.
+- Inyección de dependencias (`ITaskRepository`, `TaskService`).
+- Documentación OpenAPI integrada con **Scalar UI** en la raíz.
+- Pruebas unitarias iniciales con **xUnit** en verde.
